@@ -11,17 +11,20 @@ class HomeController extends Controller
 {
     public function index()
     {
-        if (session()->has('errors')) {
-            return redirect()->route('admin.login');
-        }
-
-        $admin = Auth::guard('admin')->user();
-        echo 'Welcome ' . $admin->name . ' <a href="' . route('admin.logout') . '">Logout</a>';
+        // if (session()->has('errors')) {
+        //     return redirect()->route('admin.login');
+        // }
+        return view('admin.dashboard');
+        // $admin = Auth::guard('admin')->user();
+        // echo 'Welcome ' . $admin->name . ' <a href="' . route('admin.logout') . '">Logout</a>';
     }
 
     public function logout()
     {
         Auth::guard('admin')->logout();
+        $url = route('admin.login');
+        dd($url); // Add this line to debug the route URL
         return redirect()->route('admin.login');
     }
+
 }

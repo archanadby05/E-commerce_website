@@ -14,6 +14,7 @@ class AdminLoginController extends Controller
         return view('admin.login');
     }
 
+
     public function authenticate(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -37,7 +38,9 @@ class AdminLoginController extends Controller
                 return redirect()->route('admin.login')->with('error', 'Either Email/Password is incorrect');
             }
         } else {
-            return redirect()->route('admin.login')->withErrors($validator)->withInput($request->only('email'));
+            return redirect()->route('admin.login')
+                ->withErrors($validator)
+                ->withInput($request->only('email'));
         }
     }
 }
