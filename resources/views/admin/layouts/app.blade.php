@@ -16,8 +16,9 @@
     <!-- AdminLTE CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/css/adminlte.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset("assets/css/custom.css") }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         .navbar-nav .dropdown-menu {
             margin-top: 5px;
@@ -47,8 +48,8 @@
                 <!-- User Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <img src="{{ asset("assets/img/avatar5.png") }}" class='img-circle elevation-1' width="40" height="40"
-                            alt="">
+                        <img src="{{ asset('assets/img/avatar5.png') }}" class='img-circle elevation-1' width="40"
+                            height="40" alt="">
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-3">
                         <h4 class="h4 mb-0"><strong>{{ Auth::guard('admin')->user()->name }}</strong></h4>
@@ -58,10 +59,10 @@
                             <i class="fas fa-user-cog mr-2"></i> Profile
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a href="{{ asset('') }}" class="dropdown-item text-danger">
+                        <a href="{{ route('admin.logout') }}" class="dropdown-item text-danger">
                             <i class="fas fa-sign-out-alt mr-2"></i> Logout
                         </a>
-                    </div>
+
                 </li>
                 <!-- End User Dropdown -->
             </ul>
@@ -73,8 +74,8 @@
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
             <a href="#" class="brand-link">
-                <img src="{{ asset("assets/img/AdminLTELogo.png") }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
-                    style="opacity: .8">
+                <img src="{{ asset('assets/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
+                    class="brand-image img-circle elevation-3" style="opacity: .8">
                 <span class="brand-text font-weight-light">E-commerce</span>
             </a>
 
@@ -83,7 +84,8 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset("assets/img/avatar5.png") }}" class="img-circle elevation-2" alt="User Image">
+                        <img src="{{ asset('assets/img/avatar5.png') }}" class="img-circle elevation-2"
+                            alt="User Image">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{ Auth::guard('admin')->user()->name }}</a>
@@ -147,13 +149,22 @@
     <!-- ./wrapper -->
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <!-- Bootstrap 4 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AdminLTE App -->
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/demo.js"></script>
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        })
+    </script>
+
+    @yield('customJs')
 </body>
 
 </html>
