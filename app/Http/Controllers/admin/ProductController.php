@@ -11,6 +11,11 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
+    public function index(){
+        $products = Product::latest('id')->paginate();
+        $data['products'] = $products;
+        return view('admin.products.list', $data);
+    }
     public function create(){
         $data = [];
         $categories = Category::orderBy('name','ASC')->get();
@@ -18,38 +23,48 @@ class ProductController extends Controller
         return view('admin.products.create', $data);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+{
+    $rules = [
+        'title' => 'required',
+        'price' => 'required|numeric',
+        'track_qty' => 'required|in:Yes,No',
+        'category' => 'required|numeric'
+    ];
 
-        $rules = [
-            'title' => 'required',
-            'price' => 'required|numeric',
-            'track_qty' => 'required|in:Yes,No',
-            'category' => 'required|numeric'
-        ];
-
-        if(!empty($request->track_qty) && $request->track_qty == 'Yes'){
-            $rules['qty'] = 'required|numeric';
-        }
-
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->passes()){
-            $product = new Product;
-            $product->title = $request->title;
-            $product->description = $request->description;
-            $product->price = $request->price;
-            $product->compare_price = $request->compare_price;
-            $product->track_qty = $request->track_qty;
-            $product->category_id = $request->category;
-            $product->status = $request->status;
-            $product->qty = $request->qty;
-            $product->save();
-        }
-        else{
-            return response()->json([
-                'status' => false,
-                'errors' => $validator->errors()
-            ]);
-        }
+    if (!empty($request->track_qty) && $request->track_qty == 'Yes') {
+        $rules['qty'] = 'required|numeric';
     }
+
+    $validator = Validator::make($request->all(), $rules);
+
+    if ($validator->passes()) {
+        $product = new Product;
+        $product->title = $request->title;
+        $product->description = $request->description;
+        $product->price = $request->price;
+        $product->compare_price = $request->compare_price;
+        $product->track_qty = $request->track_qty;
+        $product->category_id = $request->category;
+        $product->status = $request->status;
+
+        // Check if 'qty' key exists before assigning
+        if ($request->has('qty')) {
+            $product->qty = $request->qty;
+        }
+
+        $product->save();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Product created successfully',
+        ]);
+    } else {
+        return response()->json([
+            'status' => false,
+            'errors' => $validator->errors()
+        ]);
+    }
+}
+
 }
