@@ -22,8 +22,6 @@ class HomeController extends Controller
     public function logout()
     {
         Auth::guard('admin')->logout();
-        $url = route('admin.login');
-        dd($url); // Add this line to debug the route URL
         return redirect()->route('admin.login');
     }
 
