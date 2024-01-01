@@ -60,49 +60,51 @@
     @endsection
 
     @section('customJs')
-        <script>$(document).ready(function () {
-            $("#categoryForm").submit(function (event) {
-                event.preventDefault();
+        <script>
+            $(document).ready(function() {
+                $("#categoryForm").submit(function(event) {
+                    event.preventDefault();
 
-                var form = $(this);
+                    var form = $(this);
 
-                $.ajax({
-                    url: form.attr('action'),
-                    type: 'post',
-                    data: form.serialize(),
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status === true) {
-                            // Handle success, for example, redirecting to another page
-                            window.location.href = '{{ route('categories.index') }}';
-                        } else {
-                            // Handle validation errors
-                            $.each(response.errors, function (key, value) {
-                                $("#" + key).addClass('is-invalid').siblings('p').addClass('invalid-feedback').html(value);
-                            });
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: 'post',
+                        data: form.serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === true) {
+                                // Handle success, for example, redirecting to another page
+                                window.location.href = '{{ route('categories.index') }}';
+                            } else {
+                                // Handle validation errors
+                                $.each(response.errors, function(key, value) {
+                                    $("#" + key).addClass('is-invalid').siblings('p')
+                                        .addClass('invalid-feedback').html(value);
+                                });
+                            }
+                        },
+                        error: function(jqXHR, exception) {
+                            console.log("Something went wrong");
                         }
-                    },
-                    error: function (jqXHR, exception) {
-                        console.log("Something went wrong");
-                    }
+                    });
+                });
+
+                $("#name").change(function() {
+                    var element = $(this);
+
+                    $.ajax({
+                        url: '{{ route('getSlug') }}',
+                        type: 'get',
+                        data: element.serialize(),
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.status === true) {
+                                $("#slug").val(response.slug);
+                            }
+                        }
+                    });
                 });
             });
-
-            $("#name").change(function () {
-                var element = $(this);
-
-                $.ajax({
-                    url: '{{ route('getSlug') }}',
-                    type: 'get',
-                    data: element.serialize(),
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.status === true) {
-                            $("#slug").val(response.slug);
-                        }
-                    }
-                });
-            });
-        });
-                </script>
+        </script>
     @endsection

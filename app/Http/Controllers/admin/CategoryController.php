@@ -46,10 +46,72 @@ class CategoryController extends Controller
             ]);
         }
     }
-    public function edit(){
+    public function edit($categoryId, Request $request){
+        $category=Category::find($categoryId);
+
+        if(empty($category)){
+            return redirect()->route('categories.index');
+        }
+
+        return view('admin.category.edit', compact('category'));
+    }
+    public function update($categoryId, Request $request){
+
+        $category=Category::find($categoryId);
+
+        if(empty($category)){
+            return response()->json([
+                'status'=>false,
+                'notFound'=>true,
+                'message'=>'Category not found'
+            ]);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'slug' => 'required|unique:categories,slug,'.$category->id.',id',
+
+        ]);
+
+        if($validator->passes()){
+            $category->name = $request->name;
+            $category->slug = $request->slug;
+            $category->status = $request->status;
+            $category->save();
+
+            Session::flash('success', 'Category updated successfully');
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Category updated successfully'
+            ]);
+
+        } else{
+            return response()->json([
+                'status'=>false,
+                'errors'=>$validator->errors()
+            ]);
+        }
+    }
+    public function destroy($categoryId, Request $request){
+    $category = Category::find($categoryId);
+
+    if (empty($category)) {
+        Session::flash('error', 'Category not found');
+        return response()->json([
+            'status' => true,
+            'message' => 'Category not found successfully',
+        ]);
 
     }
-    public function update(){
 
-    }
+    $category->delete();
+
+    Session::flash('success', 'Category deleted successfully');
+
+    return response()->json([
+        'status' => true,
+        'message' => 'Category deleted successfully',
+    ]);
+}
 }
