@@ -15,14 +15,15 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <!-- AdminLTE CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/css/adminlte.min.css">
-
+    <!-- Dropzone CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.9.2/dist/min/dropzone.min.css">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
-        .navbar-nav .dropdown-menu {
-            margin-top: 5px;
-            top: -5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+
+        .navbar-nav .nav-item.dropdown .dropdown-menu img {
+            margin-top: -8px;
+            /* Adjust this value according to your needs */
         }
     </style>
 
@@ -47,7 +48,7 @@
                 <!-- User Dropdown -->
                 <li class="nav-item dropdown">
                     <a class="nav-link" data-toggle="dropdown" href="#">
-                        <img src="{{ asset('assets/img/avatar5.png') }}" class='img-circle elevation-1' width="40"
+                        <img src="{{ asset('assets/img/avatar.png') }}" class='img-circle elevation-1' width="40"
                             height="40" alt="">
                     </a>
                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-3">
@@ -83,8 +84,7 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="{{ asset('assets/img/avatar5.png') }}" class="img-circle elevation-2"
-                            alt="User Image">
+                        <img src="{{ asset('assets/img/avatar.png') }}" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">{{ Auth::guard('admin')->user()->name }}</a>
@@ -148,19 +148,26 @@
     <!-- ./wrapper -->
 
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     <!-- Bootstrap 4 -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Dropzone JS -->
+    <script src="https://cdn.jsdelivr.net/npm/dropzone@5.9.2/dist/min/dropzone.min.js"></script>
+
     <!-- AdminLTE App -->
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1.0/dist/js/demo.js"></script>
+
+
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
-        })
+        });
     </script>
 
     @yield('customJs')

@@ -3,6 +3,7 @@
 use App\Http\Controllers\admin\AdminLoginController;
 use App\Http\Controllers\admin\HomeController;
 use App\Http\Controllers\FrontController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -21,8 +22,8 @@ use Illuminate\Support\Str;
 |
 */
 
-Route::get('/', [FrontController::class, 'index'])->name('front.home');
 
+Route::get('/shop/{category?}', [ShopController::class, 'index'])->name('front.shop');
 Route::get('/index', [AdminLoginController::class, 'index'])->name('admin.login');
 
 
@@ -40,11 +41,11 @@ require __DIR__ . '/auth.php';
 
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::group(['middleware' => 'admin.guest'], function () {
 
-        // Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
+    Route::group(['middleware' => 'admin.guest'], function () {
         Route::post('/authenticate', [AdminLoginController::class, 'authenticate'])->name('admin.authenticate');
     });
+
     Route::group(['middleware' => 'admin.auth'], function () {
 
         Route::get('/dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
@@ -69,11 +70,12 @@ Route::group(['prefix' => 'admin'], function () {
             ]);
         })->name('getSlug');
 
-        Route::get('/products/create',[ProductController::class, 'create'])->name('products.create');
-        Route::get('/products',[ProductController::class, 'index'])->name('products.index');
-        Route::post('/products',[ProductController::class, 'store'])->name('products.store');
-        Route::get('/products/{products}/edit',[ProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{products}',[ProductController::class, 'update'])->name('products.update');
+        Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+        Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+        Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{products}/edit', [ProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{products}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{products}', [ProductController::class, 'destroy'])->name('products.delete');
+        Route::post('/upload-image', [ProductController::class, 'uploadImage'])->name('upload.image');
     });
 });

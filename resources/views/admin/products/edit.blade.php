@@ -16,8 +16,9 @@
     </section>
     <!-- Main content -->
     <section class="content">
-        <form action="#" method="get" name="productForm" id="productForm">
+        <form action="{{ route('products.update', $product->id) }}" method="post" name="productForm" id="productForm">
             @csrf
+            @method('PUT')
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-8">
@@ -28,7 +29,7 @@
                                         <div class="mb-3">
                                             <label for="title">Title</label>
                                             <input type="text" name="title" id="title" class="form-control"
-                                                placeholder="Title" value="{{ $product->title }}">
+                                                placeholder="Title" value="{{ old('title', $product->title) }}">
                                             <p class="error"></p>
                                         </div>
                                     </div>
@@ -36,7 +37,7 @@
                                         <div class="mb-3">
                                             <label for="description">Description</label><br>
                                             <textarea name="description" id="description" cols="120" rows="3" class="summernote"
-                                                placeholder="Description">{{ $product->description }}</textarea>
+                                                placeholder="Description">{{ old('description', $product->description) }}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -58,7 +59,8 @@
                                         <div class="mb-3">
                                             <label for="compare_price">Compare at Price</label>
                                             <input type="text" name="compare_price" id="compare_price"
-                                                class="form-control" placeholder="Compare Price" value="{{ $product->compare_price }}">
+                                                class="form-control" placeholder="Compare Price"
+                                                value="{{ $product->compare_price }}">
                                             <p class="text-muted mt-3">
                                                 To show a reduced price, move the product's original price into Compare at
                                                 price. Enter a lower value into Price.
@@ -77,7 +79,8 @@
                                             <div class="custom-control custom-checkbox">
                                                 <input type="hidden" name="track_qty" value="No">
                                                 <input class="custom-control-input" type="checkbox" id="track_qty"
-                                                    name="track_qty"  {{ ($product->track_qty == 'Yes') ? 'checked':'' }}" value="Yes">
+                                                    name="track_qty" {{ $product->track_qty == 'Yes' ? 'checked' : '' }}"
+                                                    value="Yes">
                                                 <label for="track_qty" class="custom-control-label">Track Quantity</label>
                                                 <p class="error"></p>
                                             </div>
@@ -98,8 +101,10 @@
                                 <h2 class="h4 mb-3">Product status</h2>
                                 <div class="mb-3">
                                     <select name="status" id="status" class="form-control">
-                                        <option {{ ($product->status == 1) ? 'selected' : '' }} value="1">Active</option>
-                                        <option {{ ($product->status == 0) ? 'selected' : '' }} value="0">Block</option>
+                                        <option {{ $product->status == 1 ? 'selected' : '' }} value="1">Active
+                                        </option>
+                                        <option {{ $product->status == 0 ? 'selected' : '' }} value="0">Block
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -113,7 +118,8 @@
                                         <option value="">Select a category</option>
                                         @if ($categories->isNotEmpty())
                                             @foreach ($categories as $category)
-                                                <option {{ ($product->category_id == $category->id) ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option {{ $product->category_id == $category->id ? 'selected' : '' }}
+                                                    value="{{ $category->id }}">{{ $category->name }}</option>
                                             @endforeach
                                         @endif
                                     </select>
@@ -121,66 +127,54 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="h4 mb-3">Media</h2>
-                                <div id="image" class="dropzone dz-clickable">
-                                    <div class="dz-message needsclick">
-                                        <br>Drop files here or click to upload.<br><br>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
 
                 <div class="pb-5 pt-3">
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                     <a href="{{ route('products.index') }}" class="btn btn-outline-dark ml-3">Cancel</a>
                 </div>
-            </div>
         </form>
     </section>
 @endsection
-
 @section('customJs')
     <script>
-        $(document).ready(function () {
-            $("#productForm").submit(function (event) {
+        $(document).ready(function() {
+            $("#productForm").submit(function(event) {
                 event.preventDefault();
 
-                // Create a FormData object
                 var formData = new FormData($(this)[0]);
-
-                // Append the CSRF token to the FormData object
                 formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+                formData.append('_method', 'PUT'); // Set the method to PUT
 
                 $.ajax({
-                    url: "{{ route('products.store') }}",
-                    type: 'post',
+                    url: $(this).attr('action'),
+                    type: 'POST', // Use POST method
                     data: formData,
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    success: function (response) {
-                        if (response['status'] == true) {
-                            // Redirect to the products index page
-                            window.location.href = "{{ route('products.index') }}";
+                    success: function(response) {
+                        if (response['status'] === true) {
+                            // Redirect to the specified URL
+                            window.location.href = "/admin/products";
                         } else {
                             var errors = response['errors'];
 
                             $(".error").removeClass('invalid-feedback').html('');
 
-                            $.each(errors, function (key, value) {
-                                $('#' + key).addClass('is-invalid').siblings('p').addClass(
-                                    'invalid-feedback').html(value);
+                            $.each(errors, function(key, value) {
+                                $('#' + key).addClass('is-invalid').siblings('p')
+                                    .addClass('invalid-feedback').html(value);
                             });
                         }
                     },
-                    error: function () {
-                        console.log("Something Went Wrong");
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("AJAX Error: " + textStatus, errorThrown);
                     }
                 });
+
             });
         });
     </script>

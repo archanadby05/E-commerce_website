@@ -35,7 +35,7 @@
                                     <div class="col-md-12">
                                         <div class="mb-3">
                                             <label for="description">Description</label><br>
-                                            <textarea name="description" id="description" cols="120" rows="3" class="summernote"
+                                            <textarea name="description" id="description" cols="100" rows="3" class="summernote"
                                                 placeholder="Description"></textarea>
                                         </div>
                                     </div>
@@ -121,16 +121,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h2 class="h4 mb-3">Media</h2>
-                                <div id="image" class="dropzone dz-clickable">
-                                    <div class="dz-message needsclick">
-                                        <br>Drop files here or click to upload.<br><br>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -146,47 +136,39 @@
 @section('customJs')
     <script>
         $("#productForm").submit(function(event) {
-            event.preventDefault();
-
-            // Create a FormData object
-            var formData = new FormData($(this)[0]);
-
-            // Append the CSRF token to the FormData object
-            formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
-
-            $.ajax({
-                url: "{{ route('products.store') }}",
-                type: 'post',
-                data: formData,
-                processData: false,
-                contentType: false,
-                dataType: 'json',
-                success: function(response) {
-                    console.log("Success Response:", response);
-
-                    if (response && response['status'] === true) {
-                        console.log("Redirecting to products index");
-                        // Redirect to products index page
-                        window.location.href = "{{ route('products.index') }}";
-                    } else {
-                        console.log("Error Response:", response);
-
-                        var errors = response['errors'];
-
-                        $(".error").removeClass('invalid-feedback').html('');
-
-                        $.each(errors, function(key, value) {
-                            $('#' + key).addClass('is-invalid').siblings('p').addClass(
+        event.preventDefault();
+        var formData = new FormData($(this)[0]);
+        formData.append('_token', $('meta[name="csrf-token"]').attr('content'));
+        $.ajax({
+            url: "{{ route('products.store') }}",
+            type: 'post',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(response) {
+                console.log("Success Response:", response);
+                if (response && response['status'] === true) {
+                    console.log("Redirecting to products index");
+                    window.location.href = "{{ route('products.index') }}";
+                } else {
+                    console.log("Error Response:", response);
+                    var errors = response['errors'];
+                    $(".error").removeClass('invalid-feedback').html('');
+                    $.each(errors, function(key, value) {
+                        $('#' + key).addClass('is-invalid').siblings('p')
+                            .addClass(
                                 'invalid-feedback').html(value);
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log("AJAX Error:", xhr, status, error);
-                    console.log("Server Response:", xhr.responseText); // Log the server response
-                    console.log("Something Went Wrong");
+                    });
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.log("AJAX Error:", xhr, status, error);
+                console.log("Server Response:", xhr
+                    .responseText);
+                console.log("Something Went Wrong");
+            }
+        });
         });
     </script>
 @endsection

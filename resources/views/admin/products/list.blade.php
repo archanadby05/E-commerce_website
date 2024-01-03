@@ -37,7 +37,7 @@
                         <thead>
                             <tr>
                                 <th width="60">ID</th>
-                                <th width="80"></th>
+
                                 <th>Product</th>
                                 <th>Price</th>
                                 <th>Qty</th>
@@ -50,7 +50,7 @@
                                 @foreach ($products as $product)
                                     <tr>
                                         <td>{{ $product->id }}</td>
-                                        <td><img src="img/product-1.jpg" class="img-thumbnail" width="50"></td>
+
                                         <td><a href="#">{{ $product->title }}</a></td>
                                         <td>{{ $product->price }}</td>
                                         <td>{{ $product->qty }}</td>

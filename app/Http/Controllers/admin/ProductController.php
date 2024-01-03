@@ -9,6 +9,7 @@ use App\Models\Category;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Product;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -61,6 +62,7 @@ class ProductController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Product created successfully',
+                'redirect' => route('products.index'), // Redirect to the index page
             ]);
         } else {
             return response()->json([
@@ -74,8 +76,8 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
 
-        if (empty($product)){
-            return redirect()->route('products.index')->with('error','Product Not Found');
+        if (empty($product)) {
+            return redirect()->route('products.index')->with('error', 'Product Not Found');
         }
 
         $data = [
@@ -119,9 +121,11 @@ class ProductController extends Controller
             $product->save();
 
             Session::flash('success', 'Product updated successfully');
-
-            // Redirect to the edit page or any other appropriate route
-            return redirect()->route('products.edit', $product->id);
+            return response()->json([
+                'status' => true,
+                'message' => 'Product updated successfully',
+                'redirect' => route('products.edit', $product->id),
+            ]);
         } else {
             return response()->json([
                 'status' => false,
@@ -130,10 +134,12 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy($id, Request $request){
+
+    public function destroy($id, Request $request)
+    {
         $product = Product::find($id);
 
-        if(empty($product)){
+        if (empty($product)) {
             Session::flash('error', 'Product Not Found');
             return response()->json([
                 'status' => false,
@@ -146,9 +152,9 @@ class ProductController extends Controller
         Session::flash('success', 'Product deleted successfully');
 
 
-            return response()->json([
-                'status' => true,
-                'message' => 'Product deleted successfully'
-            ]);
+        return response()->json([
+            'status' => true,
+            'message' => 'Product deleted successfully'
+        ]);
     }
 }
